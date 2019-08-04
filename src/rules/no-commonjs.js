@@ -30,6 +30,18 @@ function validateScope(scope) {
   return false
 }
 
+// https://github.com/estree/estree/blob/master/es5.md
+function isConditional(node) {
+  if (
+    node.type === 'IfStatement'
+    || node.type === 'TryStatement'
+    || node.type === 'LogicalExpression'
+    || node.type === 'ConditionalExpression'
+  ) return true
+  if (node.parent) return isConditional(node.parent)
+  return false
+}
+
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
@@ -93,11 +105,6 @@ module.exports = {
       },
       'CallExpression': function (call) {
         if (!validateScope(context.getScope())) return
-        if (
-          call.parent.type !== 'ExpressionStatement'
-          && call.parent.type !== 'VariableDeclarator'
-          && call.parent.type !== 'AssignmentExpression'
-        ) return
 
         if (call.callee.type !== 'Identifier') return
         if (call.callee.name !== 'require') return
@@ -109,6 +116,8 @@ module.exports = {
         if (typeof module.value !== 'string') return
 
         if (allowRequire(call, options)) return
+
+        if (isConditional(call.parent)) return
 
         // keeping it simple: all 1-string-arg `require` calls are reported
         context.report({

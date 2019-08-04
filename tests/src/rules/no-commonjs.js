@@ -58,7 +58,11 @@ ruleTester.run('no-commonjs', require('rules/no-commonjs'), {
     { code: 'module.exports = "foo"', options: [{ allowPrimitiveModules: true }] },
 
     { code: 'if (typeof window !== "undefined") require("x")', options: [{ allowRequire: true }] },
+    { code: 'if (typeof window !== "undefined") require("x")', options: [{ allowRequire: false }] },
     { code: 'if (typeof window !== "undefined") { require("x") }', options: [{ allowRequire: true }] },
+    { code: 'if (typeof window !== "undefined") { require("x") }', options: [{ allowRequire: false }] },
+  
+    { code: 'try { require("x") } catch (error) {}' },
   ],
 
   invalid: [
@@ -68,12 +72,6 @@ ruleTester.run('no-commonjs', require('rules/no-commonjs'), {
       { code: 'var x = require("x")', errors: [ { message: IMPORT_MESSAGE }] },
       { code: 'x = require("x")', errors: [ { message: IMPORT_MESSAGE }] },
       { code: 'require("x")', errors: [ { message: IMPORT_MESSAGE }] },
-      { code: 'if (typeof window !== "undefined") require("x")',
-        errors: [ { message: IMPORT_MESSAGE }],
-      },
-      { code: 'if (typeof window !== "undefined") { require("x") }',
-        errors: [ { message: IMPORT_MESSAGE }],
-      },
     ]),
 
     // exports
