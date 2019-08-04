@@ -25,6 +25,11 @@ function allowRequire(node, options) {
   return options.allowRequire
 }
 
+function validateScope(scope) {
+  if (scope.variableScope.type === 'module') return true
+  return false
+}
+
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
@@ -87,7 +92,7 @@ module.exports = {
 
       },
       'CallExpression': function (call) {
-        if (context.getScope().type !== 'module') return
+        if (!validateScope(context.getScope())) return
         if (
           call.parent.type !== 'ExpressionStatement'
           && call.parent.type !== 'VariableDeclarator'
