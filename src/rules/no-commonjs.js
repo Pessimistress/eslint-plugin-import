@@ -25,6 +25,10 @@ function allowRequire(node, options) {
   return options.allowRequire
 }
 
+function allowConditionalRequire(node, options) {
+  return options.allowConditionalRequire === undefined ? true : options.allowConditionalRequire
+}
+
 function validateScope(scope) {
   if (scope.variableScope.type === 'module') return true
   return false
@@ -52,6 +56,7 @@ const schemaObject = {
   properties: {
     allowPrimitiveModules: { 'type': 'boolean' },
     allowRequire: { 'type': 'boolean' },
+    allowConditionalRequire: { 'type': 'boolean' },
   },
   additionalProperties: false,
 }
@@ -117,7 +122,7 @@ module.exports = {
 
         if (allowRequire(call, options)) return
 
-        if (isConditional(call.parent)) return
+        if (allowConditionalRequire(call, options) && isConditional(call.parent)) return
 
         // keeping it simple: all 1-string-arg `require` calls are reported
         context.report({

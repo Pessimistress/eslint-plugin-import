@@ -72,6 +72,19 @@ ruleTester.run('no-commonjs', require('rules/no-commonjs'), {
       { code: 'var x = require("x")', errors: [ { message: IMPORT_MESSAGE }] },
       { code: 'x = require("x")', errors: [ { message: IMPORT_MESSAGE }] },
       { code: 'require("x")', errors: [ { message: IMPORT_MESSAGE }] },
+
+      { code: 'if (typeof window !== "undefined") require("x")',
+        options: [{ allowConditionalRequire: false }],
+        errors: [ { message: IMPORT_MESSAGE }],
+      },
+      { code: 'if (typeof window !== "undefined") { require("x") }',
+        options: [{ allowConditionalRequire: false }],
+        errors: [ { message: IMPORT_MESSAGE }],
+      },
+      { code: 'try { require("x") } catch (error) {}',
+        options: [{ allowConditionalRequire: false }],
+        errors: [ { message: IMPORT_MESSAGE }],
+      },
     ]),
 
     // exports
